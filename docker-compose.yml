@@ -1,0 +1,53 @@
+version: "2"
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./src/test/resources/sql:/docker-entrypoint-initdb.d
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: 256M
+        reservations:
+          memory: 256M
+      mode: replicated
+      replicas: 1
+
+  myapp:
+    container_name: myapp
+    image: kotlin-native-sb-hex-example:0.0.1-SNAPSHOT
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: 256M
+        reservations:
+          memory: 256M
+      mode: replicated
+      replicas: 1
+    command: "
+      --spring.r2dbc.name=postgres
+      --spring.r2dbc.url=r2dbc:postgresql://postgres:5432
+      --spring.r2dbc.username=postgres
+      --spring.r2dbc.password=password
+      --spring.r2dbc.pool.initial-size=3
+      --spring.r2dbc.pool.max-size=5
+      --spring.r2dbc.pool.max-create-connection-time=5s
+      --management.tracing.propagation.produce=w3c,b3_multi
+      --http.client.connect-timeout=5000
+      --http.client.read-timeout=20000
+      --my-app.exchange-rate-out-port.url=https://dolarapi.com/v1/dolares
+    "
+    #environment:
+      #SPRING_PROFILES_ACTIVE: local
