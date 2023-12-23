@@ -58,5 +58,3 @@ class WebClientErrorHandler(private val objectMapper: ObjectMapper) {
     }
 
 }
-
-private data class ErrorBody(val error: String)

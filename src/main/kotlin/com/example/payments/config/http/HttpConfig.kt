@@ -4,6 +4,7 @@ import com.example.payments.extension.sanitized
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.netty.channel.ChannelOption
 import org.slf4j.LoggerFactory
+import org.springframework.aot.hint.annotation.RegisterReflectionForBinding
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -34,6 +35,7 @@ class HttpConfig {
     private val responseLogger = LoggerFactory.getLogger("HttpResponseLogger")
 
     @Bean
+    @RegisterReflectionForBinding(ErrorBody::class)
     fun getWebClient(
         @Value("\${http.client.connect-timeout}") connectTimeout: Int,
         @Value("\${http.client.read-timeout}") readTimeout: Int,

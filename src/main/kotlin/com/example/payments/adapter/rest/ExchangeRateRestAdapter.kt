@@ -5,6 +5,7 @@ import com.example.payments.application.port.out.ExchangeRatesPort
 import com.example.payments.config.Config
 import com.example.payments.domain.ExchangeRate
 import org.slf4j.LoggerFactory
+import org.springframework.aot.hint.annotation.RegisterReflectionForBinding
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Repository
 import org.springframework.web.reactive.function.client.WebClient
@@ -16,6 +17,7 @@ class ExchangeRateRestAdapter(
     private val config: Config
 ) : ExchangeRatesPort {
 
+    @RegisterReflectionForBinding(ExchangeRateRestResponse::class)
     override fun get(): Flux<ExchangeRate> {
         LOG.info("Getting exchange rates from remote API")
         return webClient

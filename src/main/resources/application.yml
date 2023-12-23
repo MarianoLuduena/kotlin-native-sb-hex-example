@@ -1,9 +1,33 @@
 spring:
   application:
     name: kotlin-native-sb-hex-example
+  r2dbc:
+    name: postgres
+    url: r2dbc:postgresql://postgres:5432
+    username: postgres
+    password: password
+    pool:
+      initial-size: 3
+      max-size: 5
+      max-create-connection-time: 5s
+
 logging:
   pattern:
     level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+
+management:
+  tracing:
+    propagation:
+      produce: w3c,b3_multi
+
+http:
+  client:
+    connect-timeout: 5000
+    read-timeout: 20000
+
+my-app:
+  exchange-rate-out-port:
+    url: https://dolarapi.com/v1/dolares
 ---
 spring:
   config:
@@ -18,11 +42,6 @@ spring:
       initial-size: 3
       max-size: 5
       max-create-connection-time: 5s
-
-management:
-  tracing:
-    propagation:
-      produce: w3c,b3_multi
 
 http:
   client:
